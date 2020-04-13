@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/home/docent/soft/pyenv/versions/mc-server-manager/bin/python",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true
+}
