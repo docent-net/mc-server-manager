@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Type, List
 from pystemd.systemd1 import Unit
+from pystemd.dbuslib import DBus
 from mc_srv_manager.config import Config
 
 config = Config()
@@ -16,52 +17,33 @@ def check_if_server_exists(srv_name: str) -> bool:
 
     return False
 
-def verify_system_unit_is_loadable(srv_name: str) -> Type[Unit]:
-    unit_name = config.get_system_service_unit_name()
-    
-    # TODO: verify this works with user services
-    try:
-        unit = Unit(b'ddd.service')
-    except Exception:
-        raise Exception(f"Can't load service {unit_name}!")
-        print(unit)
-    unit.load()
-    
-    return unit
-
-def is_server_running(srv_name: str) -> bool:
-    try:
-        unit = verify_system_unit_is_loadable(srv_name)
-    except Exception:
-        return False
-    
+def is_server_running() -> bool:
+    # TODO: having pystemd issue here; waiting for an answer: https://github.com/facebookincubator/pystemd/issues/52
+    bus = DBus(user_mode=True)
+    unit = Unit(b'minecraft-server-stub.service', bus=bus, _autoload=True)
+    # unit.load()
+    print(unit)
+    print(unit.__dict__)
+    print(dir(unit))
     if unit.Unit.ActiveState == b'active':
         return True
     
-    return False
+    return unit.Unit.ActiveState
 
-def stop_server(srv_name: str) -> bool:
-    try:
-        unit = verify_system_unit_is_loadable(srv_name)
-    except Exception:
-        return False
-    
+def stop_server() -> bool:
     try:
         unit.Stop(b"replace")
     except Exception as e:
-        print(f"Can't stop server {srv_name}: {e}")
+        print(f"Can't stop server: {e}")
         return False
 
     return True
 
-def start_server(srv_name: str) -> bool:
-    if not verify_system_unit_is_loadable(srv_name):
-        return False
-    
+def start_server() -> bool:
     try:
         unit.Start(b"replace")
     except Exception as e:
-        print(f"Can't start server {srv_name}: {e}")
+        print(f"Can't start server: {e}")
         return False
 
     return True
@@ -85,8 +67,10 @@ def get_active_server_name() -> str:
     srv_symlink = Path(f'{config.get_server_path()}/server.propertiess')
     
     try:
-        srv_symlink_destination = srv_symlink.resolve(False)
-        # TODO: this
+        srv_symlink_destination = srv_symlink.resolve(True)
+    # If symlink was not found then there is no active server
+    except FileNotFoundError:
+        return False
     except Exception as e:
         print(f"Can't get active server name: {e}")
         return False
@@ -103,10 +87,8 @@ def list_server_instances() -> Type[List]:
     # TODO: verify whether each server's files are in sync with server
     # template (nothing is missing)
 
-    # TODO: this
-    return ['123', '234']
-    # files = []
-    # pathlist = Path(config.get_servers_data_path()).glob('*')
-    # for path in pathlist:
-    #     files.append(str(path))
-    # return files
+    files = []
+    pathlist = Path(config.get_servers_data_path()).glob('*')
+    for path in pathlist:
+        files.append(str(path))
+    return files
