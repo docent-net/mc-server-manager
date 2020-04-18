@@ -19,6 +19,7 @@ def check_if_server_exists(srv_name: str) -> bool:
 def verify_system_unit_is_loadable(srv_name: str) -> Type[Unit]:
     unit_name = get_server_unit_name(srv_name)
     
+    # TODO: verify this works with user services
     try:
         unit = Unit(b'ddd.service')
     except Exception:
@@ -77,3 +78,14 @@ def get_srv_template_files() -> Type[List]:
     for path in pathlist:
         files.append(str(path))
     return files
+
+def list_server_instances() -> Type[List]:
+    """ 
+    This method iterates over servers-data directory and 
+    returns list of found servers.
+    """
+
+    # TODO: verify whether each server's files are in sync with server
+    # template (nothing is missing)
+
+    # WIP

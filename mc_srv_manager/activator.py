@@ -34,6 +34,9 @@ def create_new_version_symlinks(server_name: str) -> None:
     """ This method removes symlinks pointing at current server
     version """
 
+    # WIP
+    # TODO: this doesn't work yet
+
     files = server_manager.get_srv_template_files()
     print(files)
 

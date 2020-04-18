@@ -1,0 +1,24 @@
+# This is a Minecraft systemd service used in https://github.com/docent-net/mc-server-manager
+# 
+# Usage:
+#
+# 1. Copy it to /USER_HOMEDIR/.config/systemd/user/minecraft-server.service
+# 2. Modify contents of this file to match your username, directories and 
+#    java parameters
+# 3. Run it as: systemctl --user start minecraft-server
+
+[Unit]
+Description=Minecraft Spigot server
+After=network.target
+AssertPathExists=/home/minecraft/minecraft-server
+
+[Service]
+Type=simple
+WorkingDirectory=/home/minecraft/minecraft-server
+ExecStart=/usr/bin/java -Xms512M -Xmx1024M -jar spigot-1.15.2.jar
+Restart=always
+PrivateTmp=true
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

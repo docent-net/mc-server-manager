@@ -1,0 +1,16 @@
+# This is a Minecraft systemd STUB service
+#
+# It is used for development purposes
+
+[Unit]
+Description=Minecraft server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/sleep 86400
+
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
