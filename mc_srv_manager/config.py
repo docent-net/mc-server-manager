@@ -39,3 +39,11 @@ class Config:
             raise ValueError('No env:server_tpl_path defined in config')
 
         return tpl_path
+
+    def get_system_service_unit_name(self) -> str:
+        try:
+            unit_name = self.config['env']['server_systemd_unit_name']
+        except KeyError:
+            raise ValueError('No env:server_systemd_unit_name defined in config')
+
+        return unit_name

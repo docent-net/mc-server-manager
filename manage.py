@@ -7,7 +7,7 @@ from mc_srv_manager.tester import test_environment
 
 @click.command()
 @click.argument('action')
-@click.option('--server_name', required=True, help="provide server name")
+@click.option('--server_name', help="provide server name")
 def main(action: str, server_name: str) -> None:
     """ ACTION is one of: create_server, activate_server """
     
