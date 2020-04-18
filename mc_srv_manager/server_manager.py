@@ -86,6 +86,7 @@ def get_active_server_name() -> str:
     
     try:
         srv_symlink_destination = srv_symlink.resolve(False)
+        # TODO: this
     except Exception as e:
         print(f"Can't get active server name: {e}")
         return False
@@ -102,6 +103,7 @@ def list_server_instances() -> Type[List]:
     # TODO: verify whether each server's files are in sync with server
     # template (nothing is missing)
 
+    # TODO: this
     return ['123', '234']
     # files = []
     # pathlist = Path(config.get_servers_data_path()).glob('*')
