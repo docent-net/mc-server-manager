@@ -10,7 +10,7 @@ from mc_srv_manager.config import Config
 class server_manager:
     def __init__(self) -> None:
         self.__config = Config()
-        self.__current_server_name = self.get_active_server_name()
+        self.__current_server_name = self.__read_active_server_name()
 
     def check_if_server_exists(self, srv_name: str) -> bool:
         if Path(
@@ -21,41 +21,51 @@ class server_manager:
 
         return False
 
-    def __load_server_unit(self) -> Type[Unit]:
-        with DBus(user_mode=True) as bus, \
-            Unit(self.__config.get_system_service_unit_name(), bus=bus) as service:
-            service.load()
-            self.__service = service
-
     def is_server_running(self) -> bool:
         with DBus(user_mode=True) as bus, \
-            Unit(self.__config.get_system_service_unit_name(), bus=bus) as service:
-            service.load()
+            Unit(self.__config.get_system_service_unit_name(), \
+            bus=bus, _autoload=True) as service:
+    
             if service.Unit.ActiveState == b'active':
                 return True
-            
-            return service.Unit.ActiveState
-        
+
+            return False
+
+        print('Can\t read server state via Dbus!')
         return False
 
     def stop_server(self) -> bool:
-        try:
-            unit.Stop(b"replace")
-        except Exception as e:
-            print(f"Can't stop server: {e}")
-            return False
+        with DBus(user_mode=True) as bus, \
+            Unit(self.__config.get_system_service_unit_name(), \
+            bus=bus, _autoload=True) as service:
+    
+            try:
+                service.Unit.Stop(b"replace")
+            except Exception as e:
+                print(f"Can't stop server: {e}")
+                return False
 
-        return True
+            return True
+
+        print('Can\t read server state via Dbus!')
+        return False
 
     def start_server(self) -> bool:
-        # TODO: pystemd fix
-        try:
-            unit.Start(b"replace")
-        except Exception as e:
-            print(f"Can't start server: {e}")
-            return False
+        with DBus(user_mode=True) as bus, \
+            Unit(self.__config.get_system_service_unit_name(), \
+            bus=bus, _autoload=True) as service:
+    
+            try:
+                service.Unit.Start(b"replace")
+            except Exception as e:
+                print(f"Can't start server: {e}")
+                return False
 
-        return True
+            print(f'Server\'s state: {service.Unit.ActiveState}')    
+            return True
+
+        print('Can\t read server state via Dbus!')
+        return False
 
     def get_srv_template_files(self) -> Type[List]:
         """ Method returns list of all files (top-level) and dirs
@@ -64,13 +74,30 @@ class server_manager:
         files = []
         pathlist = Path(self.__config.get_server_template_path()).glob('*')
         for path in pathlist:
-            files.append(str(path))
+            files.append(str(path.stem))
         return files
 
     def get_active_server_name(self) -> str:
         """ 
-        This method returns server that is currently set as active. Method
-        checks the target directory of a server.properties symlink.
+        This method returns server that is currently set as active
+        """
+
+        return self.__current_server_name
+
+    def __update_current_server_name(self, server_name:str = False) -> None:
+        """
+        This method updates state information about server, which is
+        currently symlinked
+        """
+        if server_name:
+            self.__current_server_name = server_name
+        else:
+            self.__current_server_name = self.__read_active_server_name()
+
+    def __read_active_server_name(self) -> str:
+        """
+        This method guesses (basing on server.properties symlink) currently
+        active server name
         """
 
         srv_symlink = Path(f'{self.__config.get_server_path()}/server.propertiess')
@@ -85,16 +112,6 @@ class server_manager:
             return False
 
         return str(srv_symlink_destination)
-
-    def __update_current_server_name(server_name: False) -> None:
-        """
-        This method updates state information about server, which is
-        currently symlinked
-        """
-        if server_name:
-            self.__current_server_name = server_name
-        else:
-            self.__current_server_name = self.get_active_server_name()
 
     def list_server_instances(self) -> Type[List]:
         """ 
@@ -115,18 +132,13 @@ class server_manager:
         """ This method removes symlinks pointing at current server
         version """
 
-        # WIP
-        # TODO: this doesn't work yet
-
-        files = srv_mgr.get_srv_template_files()
-        print(files)
+        files = self.get_srv_template_files()
 
         for file in files:
-            print(file)
-            file_obj = Path(srv_mgr.config.get_server_template_path(), file)
+            file_obj = Path(self.__config.get_server_path(), file)
             if not file_obj.exists():
                 try:
-                    server_path = f'{srv_mgr.config.get_servers_data_path()}/{server_name}/{file}'
+                    server_path = f'{self.__config.get_servers_data_path()}/{server_name}/{file}'
                     file_obj.symlink_to(server_path)
                 except Exception:
                     print(f"Cant't create symlink for {server_path}!")
@@ -135,7 +147,7 @@ class server_manager:
                 print(f"Looks like symlink {str(file_obj)} already exist!")
                 return False
 
-        self.__update_current_server_name(server_name=server_name)
+        self.__update_current_server_name(server_name)
 
         return True
 
@@ -143,27 +155,28 @@ class server_manager:
         """ This method removes symlinks pointing at current server
         version """
 
-        symlinks = srv_mgr.get_srv_template_files()
+        symlinks = self.get_srv_template_files()
 
         # in case no symlinks found - probably 1st server being created
         if not symlinks:
             return True
 
         for file in symlinks:
-            file_obj = Path(srv_mgr.config.get_server_template_path(), file)
+            file_obj = Path(self.__config.get_server_path(), file)
             if file_obj.is_dir():
                 try:
+                    print(f'Removing dir {file_obj}')
                     file_obj.rmdir()
                 except Exception:
                     print(f"Cant't remove file {file}!")
-                    sys.exit(1)
+                    return False
             else:
                 try:
                     file_obj.unlink(missing_ok = True)
                 except Exception:
                     print(f"Cant't remove dir {file}!")
-                    sys.exit(1)
+                    return False
 
-        self.__update_current_server_name()
+        self.__update_current_server_name('none')
 
         return True
