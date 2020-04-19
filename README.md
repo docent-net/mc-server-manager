@@ -1,9 +1,7 @@
 # mc-server-manager
 
 The main goal of this project is to manage Minecraft server instances on
-a virtual machine / physical server **having only 1 instance running at a time**.
-
-**This project is in an early stage. Don't use it until first released version**
+a container / virtual machine / physical server **having only 1 instance running at a time**.
 
 ### Already implemented functions
 
