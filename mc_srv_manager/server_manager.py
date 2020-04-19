@@ -10,7 +10,7 @@ from mc_srv_manager.config import Config
 class server_manager:
     def __init__(self) -> None:
         self.__config = Config()
-        self.__current_server_version = self.get_active_server_name()
+        self.__current_server_name = self.get_active_server_name()
 
     def check_if_server_exists(self, srv_name: str) -> bool:
         if Path(
@@ -86,6 +86,15 @@ class server_manager:
 
         return str(srv_symlink_destination)
 
+    def __update_current_server_name(server_name: False) -> None:
+        """
+        This method updates state information about server, which is
+        currently symlinked
+        """
+        if server_name:
+            self.__current_server_name = server_name
+        else:
+            self.__current_server_name = self.get_active_server_name()
 
     def list_server_instances(self) -> Type[List]:
         """ 
@@ -102,7 +111,7 @@ class server_manager:
             files.append(str(path))
         return files
 
-    def create_new_version_symlinks(server_name: str) -> None:
+    def create_new_version_symlinks(self, server_name: str) -> bool:
         """ This method removes symlinks pointing at current server
         version """
 
@@ -126,15 +135,14 @@ class server_manager:
                 print(f"Looks like symlink {str(file_obj)} already exist!")
                 return False
 
-        # TODO: update current server version
-        
+        self.__update_current_server_name(server_name=server_name)
+
         return True
 
-    def remove_current_version_symlinks() -> None:
+    def remove_current_version_symlinks(self) -> bool:
         """ This method removes symlinks pointing at current server
         version """
 
-        # TODO: update current server version
         symlinks = srv_mgr.get_srv_template_files()
 
         # in case no symlinks found - probably 1st server being created
@@ -155,5 +163,7 @@ class server_manager:
                 except Exception:
                     print(f"Cant't remove dir {file}!")
                     sys.exit(1)
+
+        self.__update_current_server_name()
 
         return True
