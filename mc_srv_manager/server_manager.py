@@ -6,10 +6,11 @@ from pystemd.systemd1 import Unit
 from pystemd.dbuslib import DBus
 from mc_srv_manager.config import Config
 
-# TODO: refactor me; server_manager should now be a class keeping server state
+
 class server_manager:
     def __init__(self) -> None:
         self.__config = Config()
+        self.__current_server_version = self.get_active_server_name()
 
     def check_if_server_exists(self, srv_name: str) -> bool:
         if Path(
@@ -22,7 +23,7 @@ class server_manager:
 
     def __load_server_unit(self) -> Type[Unit]:
         with DBus(user_mode=True) as bus, \
-            Unit(config.get_system_service_unit_name(), bus=bus) as service:
+            Unit(self.__config.get_system_service_unit_name(), bus=bus) as service:
             service.load()
             self.__service = service
 
@@ -47,6 +48,7 @@ class server_manager:
         return True
 
     def start_server(self) -> bool:
+        # TODO: pystemd fix
         try:
             unit.Start(b"replace")
         except Exception as e:
@@ -99,3 +101,59 @@ class server_manager:
         for path in pathlist:
             files.append(str(path))
         return files
+
+    def create_new_version_symlinks(server_name: str) -> None:
+        """ This method removes symlinks pointing at current server
+        version """
+
+        # WIP
+        # TODO: this doesn't work yet
+
+        files = srv_mgr.get_srv_template_files()
+        print(files)
+
+        for file in files:
+            print(file)
+            file_obj = Path(srv_mgr.config.get_server_template_path(), file)
+            if not file_obj.exists():
+                try:
+                    server_path = f'{srv_mgr.config.get_servers_data_path()}/{server_name}/{file}'
+                    file_obj.symlink_to(server_path)
+                except Exception:
+                    print(f"Cant't create symlink for {server_path}!")
+                    return False
+            else:
+                print(f"Looks like symlink {str(file_obj)} already exist!")
+                return False
+
+        # TODO: update current server version
+        
+        return True
+
+    def remove_current_version_symlinks() -> None:
+        """ This method removes symlinks pointing at current server
+        version """
+
+        # TODO: update current server version
+        symlinks = srv_mgr.get_srv_template_files()
+
+        # in case no symlinks found - probably 1st server being created
+        if not symlinks:
+            return True
+
+        for file in symlinks:
+            file_obj = Path(srv_mgr.config.get_server_template_path(), file)
+            if file_obj.is_dir():
+                try:
+                    file_obj.rmdir()
+                except Exception:
+                    print(f"Cant't remove file {file}!")
+                    sys.exit(1)
+            else:
+                try:
+                    file_obj.unlink(missing_ok = True)
+                except Exception:
+                    print(f"Cant't remove dir {file}!")
+                    sys.exit(1)
+
+        return True
