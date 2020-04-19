@@ -18,7 +18,10 @@ a virtual machine / physical server **having only 1 instance running at a time**
 ### Usage
 
 - test script installation and configuration: `./manage.py test`
-- activate specified server: `./manage.py activate_server <server_name>`
+- activate specified server: `./manage.py activate <server_name>`
+- stop server: `./manage.py stop`
+- start server: `./manage.py start`
+- restart server: `./manage.py restart`
 
 ### Installation and configuration
 
@@ -33,9 +36,6 @@ a virtual machine / physical server **having only 1 instance running at a time**
 
 - write unit tests
 - create server
-- stop server
-- start server
-- restart server
 - running own commands (e.g. building scripts): https://github.com/trichner/ScriptRunner
 - UI
 - attaching to server console via UI

@@ -61,7 +61,7 @@ class server_manager:
                 print(f"Can't start server: {e}")
                 return False
 
-            print(f'Server\'s state: {service.Unit.ActiveState}')    
+            # print(f'Server\'s state: {service.Unit.ActiveState}')    
             return True
 
         print('Can\t read server state via Dbus!')
@@ -74,7 +74,7 @@ class server_manager:
         files = []
         pathlist = Path(self.__config.get_server_template_path()).glob('*')
         for path in pathlist:
-            files.append(str(path.stem))
+            files.append(str(path.name))
         return files
 
     def get_active_server_name(self) -> str:
@@ -100,7 +100,7 @@ class server_manager:
         active server name
         """
 
-        srv_symlink = Path(f'{self.__config.get_server_path()}/server.propertiess')
+        srv_symlink = Path(f'{self.__config.get_server_path()}/server.properties')
         
         try:
             srv_symlink_destination = srv_symlink.resolve(True)
@@ -111,7 +111,7 @@ class server_manager:
             print(f"Can't get active server name: {e}")
             return False
 
-        return str(srv_symlink_destination)
+        return str(srv_symlink_destination.parent.name)
 
     def list_server_instances(self) -> Type[List]:
         """ 
@@ -139,6 +139,7 @@ class server_manager:
             if not file_obj.exists():
                 try:
                     server_path = f'{self.__config.get_servers_data_path()}/{server_name}/{file}'
+                    # print(f'Creating symlink from {str(file_obj)} to {server_path}')
                     file_obj.symlink_to(server_path)
                 except Exception:
                     print(f"Cant't create symlink for {server_path}!")
@@ -163,19 +164,12 @@ class server_manager:
 
         for file in symlinks:
             file_obj = Path(self.__config.get_server_path(), file)
-            if file_obj.is_dir():
-                try:
-                    print(f'Removing dir {file_obj}')
-                    file_obj.rmdir()
-                except Exception:
-                    print(f"Cant't remove file {file}!")
-                    return False
-            else:
-                try:
-                    file_obj.unlink(missing_ok = True)
-                except Exception:
-                    print(f"Cant't remove dir {file}!")
-                    return False
+            try:
+                # print(f'Removing file {file_obj}')
+                file_obj.unlink(missing_ok = True)
+            except Exception:
+                print(f"Cant't remove dir {file}!")
+                return False
 
         self.__update_current_server_name('none')
 

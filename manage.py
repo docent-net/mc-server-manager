@@ -2,19 +2,25 @@
 
 import os
 import click
-from mc_srv_manager.activator import activate_server
+import mc_srv_manager.server_actions
 from mc_srv_manager.tester import test_environment
 
 @click.command()
 @click.argument('action')
 @click.option('--server_name', help="provide server name")
 def main(action: str, server_name: str) -> None:
-    """ ACTION is one of: create_server, activate_server """
+    """ ACTION is one of: create_server, activate """
     
-    if action == 'activate_server':
-        activate_server(server_name)
+    if action == 'activate':
+        mc_srv_manager.server_actions.activate(server_name)
     elif action == 'test':
         test_environment()
+    elif action == 'start':
+        mc_srv_manager.server_actions.start()
+    elif action == 'stop':
+        mc_srv_manager.server_actions.stop()
+    elif action == 'restart':
+        mc_srv_manager.server_actions.restart()
 
 
 if __name__ == "__main__":
