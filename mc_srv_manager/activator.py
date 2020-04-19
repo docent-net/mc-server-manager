@@ -2,15 +2,18 @@
 
 import sys
 from mc_srv_manager import server_manager
+from mc_srv_manager import config
 from pathlib import Path
 
+srv_mgr = server_manager()
+
 def activate_server(server_name: str) -> None:
-    if not server_manager.check_if_server_exists(server_name):
+    if not srv_mgr.check_if_server_exists(server_name):
         print(f"Server {server_name} doesn't exist!")
         sys.exit(1)
     
-    if server_manager.is_server_running(server_name):
-        server_manager.stop_server(server_name)
+    if srv_mgr.is_server_running(server_name):
+        srv_mgr.stop_server(server_name)
 
     # activate this server
     if remove_current_version_symlinks():
@@ -23,13 +26,14 @@ def activate_server(server_name: str) -> None:
         print("Can't remove symlinks to the current version of the server!")
         sys.exit(1)
 
-    if server_manager.start_server(server_name):
+    if srv_mgr.start_server(server_name):
         print(f"Server {server_name} started succesfully!")
     else:
         sys.exit(1)
         
     sys.exit(0)
 
+# TODO: this method should be moved to server_manager
 def create_new_version_symlinks(server_name: str) -> None:
     """ This method removes symlinks pointing at current server
     version """
@@ -37,15 +41,15 @@ def create_new_version_symlinks(server_name: str) -> None:
     # WIP
     # TODO: this doesn't work yet
 
-    files = server_manager.get_srv_template_files()
+    files = srv_mgr.get_srv_template_files()
     print(files)
 
     for file in files:
         print(file)
-        file_obj = Path(server_manager.config.get_server_template_path(), file)
+        file_obj = Path(srv_mgr.config.get_server_template_path(), file)
         if not file_obj.exists():
             try:
-                server_path = f'{server_manager.config.get_servers_data_path()}/{server_name}/{file}'
+                server_path = f'{srv_mgr.config.get_servers_data_path()}/{server_name}/{file}'
                 file_obj.symlink_to(server_path)
             except Exception:
                 print(f"Cant't create symlink for {server_path}!")
@@ -56,18 +60,19 @@ def create_new_version_symlinks(server_name: str) -> None:
 
     return True
 
+# TODO: this method should be moved to server_manager
 def remove_current_version_symlinks() -> None:
     """ This method removes symlinks pointing at current server
     version """
 
-    symlinks = server_manager.get_srv_template_files()
+    symlinks = srv_mgr.get_srv_template_files()
 
     # in case no symlinks found - probably 1st server being created
     if not symlinks:
         return True
 
     for file in symlinks:
-        file_obj = Path(server_manager.config.get_server_template_path(), file)
+        file_obj = Path(srv_mgr.config.get_server_template_path(), file)
         if file_obj.is_dir():
             try:
                 file_obj.rmdir()
