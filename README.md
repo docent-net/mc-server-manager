@@ -3,10 +3,6 @@
 The main goal of this project is to manage Minecraft server instances on
 a container / virtual machine / physical server **having only 1 instance running at a time**.
 
-### Already implemented functions
-
-- activation of a choosen server instance
-
 ### Requirements
 
 - Any systemd-powered Linux server with Minecraft server installed.
