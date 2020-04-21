@@ -16,10 +16,11 @@ a container / virtual machine / physical server **having only 1 instance running
 ### Usage
 
 - test script installation and configuration: `./manage.py test`
-- activate specified server: `./manage.py activate <server_name>`
+- activate specified server: `./manage.py activate --server_name=<server_name>`
 - stop server: `./manage.py stop`
 - start server: `./manage.py start`
 - restart server: `./manage.py restart`
+- create a new server from template: `./manage.py create --server_name=<server_name>`
 
 ### Installation and configuration
 
@@ -33,7 +34,6 @@ a container / virtual machine / physical server **having only 1 instance running
 ### Backlog
 
 - write unit tests
-- create server
 - running own commands (e.g. building scripts): https://github.com/trichner/ScriptRunner
 - UI
 - attaching to server console via UI

@@ -5,7 +5,7 @@ from typing import Type, List
 from pystemd.systemd1 import Unit
 from pystemd.dbuslib import DBus
 from mc_srv_manager.config import Config
-
+from mc_srv_manager.utils import copytree
 
 class server_manager:
     def __init__(self) -> None:
@@ -173,4 +173,21 @@ class server_manager:
 
         self.__update_current_server_name('none')
 
+        return True
+
+    def create_new_server_from_templ_dir(self, server_name: str) -> bool:
+        """ 
+        This method creates a new server by copying template directory 
+        into a new server-data/<server_name> dir
+        """
+
+        try:
+            copytree(
+                src=self.__config.get_server_template_path(),
+                dst=f'{self.__config.get_servers_data_path()}/{server_name}'
+            )
+        except Exception as e:
+            print(f"Cant't create new server {server_name}: {e}!")
+            return False
+        
         return True

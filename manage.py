@@ -16,6 +16,8 @@ def main(action: str, server_name: str) -> None:
     
     if action == 'activate':
         mc_srv_manager.server_actions.activate(server_name)
+    elif action == 'create':
+        mc_srv_manager.server_actions.create(server_name)
     elif action == 'test':
         test_environment()
     elif action == 'start':

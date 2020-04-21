@@ -110,3 +110,28 @@ def restart() -> None:
         sys.exit(1)
 
     sys.exit(1)
+
+def create(server_name: str) -> None:
+    """
+    This method runs whole flow of creating a new server from a template
+    """
+
+    if srv_mgr.check_if_server_exists(server_name):
+        print(f"Server {server_name} already exist!")
+        sys.exit(1)
+    
+    # create new server
+    #TODO:
+    if srv_mgr.create_new_server_from_templ_dir(server_name):
+        print('New server created successfully!')
+    else:
+        print("Can't create new server!")
+        sys.exit(1)
+
+    active_server_name = srv_mgr.get_active_server_name()
+    if active_server_name:
+        print(f'Active server name: {active_server_name}\n')
+    else:
+        print(f'No active server found. Set an active server?\n')
+        
+    sys.exit(0)
