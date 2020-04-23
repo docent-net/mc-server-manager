@@ -2,6 +2,11 @@ dist: bionic
 language: python
 python:
 - "3.8"
+before_install:
+- sudo apt-get update
+addons:
+  apt:
+    update: true
 install:
   - pip install -r requirements.txt
 script:
