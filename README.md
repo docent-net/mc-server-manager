@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/docent-net/mc-server-manager.svg?branch=master)](https://travis-ci.org/docent-net/mc-server-manager)
+
 # mc-server-manager
 
 The main goal of this project is to manage Minecraft server instances on
