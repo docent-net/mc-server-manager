@@ -121,7 +121,6 @@ def create(server_name: str) -> None:
         sys.exit(1)
     
     # create new server
-    #TODO:
     if srv_mgr.create_new_server_from_templ_dir(server_name):
         print('New server created successfully!')
     else:

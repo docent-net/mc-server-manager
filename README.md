@@ -31,6 +31,8 @@ a container / virtual machine / physical server **having only 1 instance running
 
 - write unit tests
 - running own commands (e.g. building scripts): https://github.com/trichner/ScriptRunner
+- attaching to console (tty)
+- API server
 - UI
 - attaching to server console via UI
 
