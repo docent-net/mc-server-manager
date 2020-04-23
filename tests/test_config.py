@@ -19,54 +19,42 @@ class testConfig(TestCase):
             PosixPath
         )
 
-    def testServerPathShouldBeStr(self) -> None:
-        config = Config()
-        self.assertIsInstance(
-            config.get_server_path(),
-            str
-        )
-
-    def testShouldReturnServerPath(self) -> None:
+    def testServerPathShouldBeStrAndReturn(self) -> None:
         config = Config()
         expected_value = '/somewhere/is/server-path'
         with mock.patch.dict(config.config, {'env': {'server_path': expected_value}}):
-            assert config.get_server_path() is expected_value
+            self.assertEqual(config.get_server_path(), expected_value)
+            self.assertIsInstance(
+                config.get_server_path(),
+                str
+            )
 
-    def testServerDataPathShouldBeStr(self) -> None:
-        config = Config()
-        self.assertIsInstance(
-            config.get_servers_data_path(),
-            str
-        )
-
-    def testShouldReturnDataPath(self) -> None:
+    def testServerDataPathShouldBeStrAndReturn(self) -> None:
         config = Config()
         expected_value = '/somewhere/is/data-path'
         with mock.patch.dict(config.config, {'env': {'servers_data_path': expected_value}}):
-            assert config.get_servers_data_path() is expected_value
+            self.assertIsInstance(
+                config.get_servers_data_path(),
+                str
+            )
+            self.assertEqual(config.get_servers_data_path(), expected_value)
 
-    def testServerTemplatePathShouldBeStr(self) -> None:
-        config = Config()
-        self.assertIsInstance(
-            config.get_server_template_path(),
-            str
-        )
-
-    def testShouldReturnTemplatePath(self) -> None:
+    def testServerTemplatePathShouldBeStrAndReturn(self) -> None:
         config = Config()
         expected_value = '/somewhere/is/template-path'
         with mock.patch.dict(config.config, {'env': {'server_tpl_path': expected_value}}):
-            assert config.get_server_template_path() is expected_value
+            self.assertEqual(config.get_server_template_path(), expected_value)
+            self.assertIsInstance(
+                config.get_server_template_path(),
+                str
+            )
 
-    def testSystemServiceUnitNameShouldBeStr(self) -> None:
-        config = Config()
-        self.assertIsInstance(
-            config.get_system_service_unit_name(),
-            str
-        )
-
-    def testShouldReturnSystemServiceUnitName(self) -> None:
+    def testSystemServiceUnitNameShouldBeStrAndReturn(self) -> None:
         config = Config()
         expected_value = 'minecraft-server.service'
         with mock.patch.dict(config.config, {'env': {'server_systemd_unit_name': expected_value}}):
-            assert config.get_system_service_unit_name() is expected_value
+            self.assertEqual(config.get_system_service_unit_name(), expected_value)
+            self.assertIsInstance(
+                config.get_system_service_unit_name(),
+                str
+            )
