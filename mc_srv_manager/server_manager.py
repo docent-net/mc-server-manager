@@ -7,6 +7,7 @@ from pystemd.dbuslib import DBus
 from mc_srv_manager.config import Config
 from mc_srv_manager.utils import copytree
 
+
 class server_manager:
     def __init__(self) -> None:
         self.__config = Config()
@@ -125,7 +126,7 @@ class server_manager:
         files = []
         pathlist = Path(self.__config.get_servers_data_path()).glob('*')
         for path in pathlist:
-            files.append(str(path))
+            files.append(str(path.name))
         return files
 
     def create_new_version_symlinks(self, server_name: str) -> bool:
