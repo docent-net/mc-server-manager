@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from flask import Flask, jsonify
+from flask_api import Flask-API, jsonify
+from flask.ext.api.exceptions import APIException
 from flask_cors import CORS
 from mc_srv_manager.server_manager import server_manager
 
@@ -36,7 +37,7 @@ def get_servers():
 @app.route('/activate_server/{server_name}', methods=['GET'])
 def activate_servers(server_name):
     
-    
+
     return jsonify({
         'status': 'success',
         'servers': servers
