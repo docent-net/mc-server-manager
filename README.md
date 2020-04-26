@@ -1,4 +1,6 @@
-[![Build Status](https://travis-ci.org/docent-net/mc-server-manager.svg?branch=master)](https://travis-ci.org/docent-net/mc-server-manager)
+![](https://github.com/docent-net/mc-server-manager/workflows/ci-backend-server/badge.svg)
+
+![](https://github.com/docent-net/mc-server-manager/workflows/ci-frontend-ui/badge.svg)
 
 # mc-server-manager
 
