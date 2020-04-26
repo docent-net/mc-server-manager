@@ -21,6 +21,10 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install system libraries
+        run: |
+          sudo apt-get update -y
+          sudo apt-get -y install libsystemd-dev
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
