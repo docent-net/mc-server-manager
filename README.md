@@ -29,15 +29,6 @@ a container / virtual machine / physical server **having only 1 instance running
 1. confirm everything works fine: `./manage.py test` - this should list all servers found in **USER_HOMEDIR/servers-data directory** as well as should display current state of the Minecraft server.
 1. copy **config.ini** to **/USER_HOMEDIR/.minecraft/mc-manager-config** and edit its contents to match your environment**
 
-### Backlog
-
-- write unit tests
-- running own commands (e.g. building scripts): https://github.com/trichner/ScriptRunner
-- attaching to console (tty)
-- API server
-- UI
-- attaching to server console via UI
-
 ### High level overview
 
 The main goal of this project is to provide user with a tool (CLI and UI) for managing many MC server instances within one Linux server instance.
