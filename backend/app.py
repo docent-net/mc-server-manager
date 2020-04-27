@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
-from flask_api import Flask-API, jsonify
-from flask.ext.api.exceptions import APIException
+from flask_api import FlaskAPI, status, exceptions
 from flask_cors import CORS
+from flask import request
 from mc_srv_manager.server_manager import server_manager
 
 # configuration
 DEBUG = True
 
-app = Flask(__name__)
+app = FlaskAPI(__name__)
 app.config.from_object(__name__)
 
 # enable CORS
@@ -19,8 +19,7 @@ server_manager = server_manager()
 
 @app.route('/health', methods=['GET'])
 def ping_pong():
-    return jsonify('OK')
-
+    return {'status': 'OK'}
 
 @app.route('/get_servers', methods=['GET'])
 def get_servers():
@@ -29,20 +28,29 @@ def get_servers():
     for srv_name in server_manager.list_server_instances():
         servers.append({'server_name': srv_name})
 
-    return jsonify({
+    return {
         'status': 'success',
         'servers': servers
-    })
+    }
 
-@app.route('/activate_server/{server_name}', methods=['GET'])
-def activate_servers(server_name):
-    
+@app.route('/create_server', methods=['PUT'])
+def create_server():
+    server_name = str(request.data.get('server_name', ''))
+    if not server_name:
+        raise exceptions.ParseError('No server_name provided?')
 
-    return jsonify({
-        'status': 'success',
-        'servers': servers
-    })
+    if server_manager.check_if_server_exists(server_name):
+        raise exceptions.ParseError(f'Server named {server_name} already exists!')
+
+    try:
+        server_manager.create_new_server_from_templ_dir(server_name)
+    except Exception as e:
+        raise exceptions.ParseError(f'Could not create a new server: {e}')
+
+    return {
+        'status': 'server_created'
+    }
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='127.0.0.1', port=8000, debug=True)
