@@ -15,6 +15,9 @@ a container / virtual machine / physical server **having only 1 instance running
 
 ### Usage
 
+**via CLI**:
+
+- enter **backend** directory
 - test script installation and configuration: `./manage.py test`
 - activate specified server: `./manage.py activate --server_name=<server_name>`
 - stop server: `./manage.py stop`
@@ -22,13 +25,26 @@ a container / virtual machine / physical server **having only 1 instance running
 - restart server: `./manage.py restart`
 - create a new server from template: `./manage.py create --server_name=<server_name>`
 
+**via API**:
+
+- start server (will bind to 8000 port): `cd backend; python app.py`
+- api methods:
+    - /list_servers
+    - /activate_server (POST, GET: <server_name=server_name>)
+    - /delete_server (DELETE: <server_name=server_name>)
+    - /create_server (PUT: <server_name=server_name>)
+
+**via UI**:
+
+Not implemented yet
+
 ### Installation and configuration
 
 1. clone this repository
 1. copy **minecraft-server.service** to the **/USER_HOMEDIR/.config/systemd/user/minecraft-server.service
 1. edit above service file to match your environment and needs
 1. install required Python libraries (`pip install --user -r requirements.txt`)
-1. confirm everything works fine: `./manage.py test` - this should list all servers found in **USER_HOMEDIR/servers-data directory** as well as should display current state of the Minecraft server.
+1. confirm everything works fine: `cd backend; ./manage.py test` - this should list all servers found in **USER_HOMEDIR/servers-data directory** as well as should display current state of the Minecraft server.
 1. copy **config.ini** to **/USER_HOMEDIR/.minecraft/mc-manager-config** and edit its contents to match your environment**
 
 ### High level overview
@@ -45,7 +61,7 @@ Main assumptions are:
 1. There is also a copy of **srv-template** directory (provided in this repo) under **/USER_HOMEDIR/srv-template**
 1. A systemd unit service is created in **/USER_HOMEDIR/.config/systemd/user/minecraft-server.service** and managed by this user (without a need for elevated permissions)
 
-Now, in order to create a new server scripts basically copies all files from **srv_template** to a new subdirectory under **servers-data** (e.g. **servers-data/new-server**).
+Now, in order to create a new server scripts/API basically copy all files from **srv_template** to a new subdirectory under **servers-data** (e.g. **servers-data/new-server**).
 
 In order to activate a server script will remove all symlinks from **minecraft-server** directory and create new ones pointing at **servers-data/new-server**. Afterwards it will restart **minecraft-server.service** service.
 
@@ -76,3 +92,9 @@ For now the whole machinery make a naive assumption that every server instance w
 ### Development
 
 For development purposes there is a **minecraft-server-stub.service** in this repo which might be used for testing various server scenarios.
+
+API server uses [Flask-API](https://www.flaskapi.org/) library. In order to start API server:
+
+`cd backend; python app.py`
+
+Above will start the server on TCP/8000 port.
