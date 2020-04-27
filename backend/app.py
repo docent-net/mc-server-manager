@@ -51,6 +51,18 @@ def create_server():
         'status': 'server_created'
     }
 
+@app.route('/delete_server', methods=['DELETE'])
+def delete_server():
+    server_name = str(request.data.get('server_name', ''))
+    if not server_name:
+        raise exceptions.ParseError('No server_name provided?')
+
+    if not server_manager.check_if_server_exists(server_name):
+        raise exceptions.ParseError(f'Server named {server_name} doesn\'t exist!')
+
+    # TODO: removing server
+    raise exceptions.NotFound('Not implemented')
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
