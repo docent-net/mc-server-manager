@@ -63,6 +63,33 @@ def delete_server():
     # TODO: removing server
     raise exceptions.NotFound('Not implemented')
 
+@app.route('/activate_server', methods=['POST','GET'])
+def activate_server():
+    """
+    This method runs whole flow of activating a new server
+    """
+    server_name = str(request.data.get('server_name', ''))
+    if not server_name:
+        raise exceptions.ParseError('No server_name provided?')
+
+    if not server_manager.check_if_server_exists(server_name):
+        raise exceptions.ParseError(f'Server named {server_name} doesn\'t exist!')
+
+    if server_manager.is_server_running():
+        server_manager.stop_server()
+
+     # activate this server
+    if server_manager.remove_current_version_symlinks():
+        if not server_manager.create_new_version_symlinks(server_name):
+            raise exceptions.ParseError("Can't create symlinks!")
+    else:
+        raise exceptions.ParseError("Can't remove symlinks to the current version of the server")
+
+    if server_manager.start_server():
+        return {'status': 'server_activated'}
+    else:
+        raise exceptions.ParseError('Server was activated but could not be started')
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
