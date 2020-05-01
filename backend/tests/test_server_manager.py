@@ -15,6 +15,7 @@ class testConfig(TestCase):
     def tearDown(self) -> None:
         pass
 
+    @mock.patch('mc_srv_manager.config.Config.get_servers_data_path', bogus_return_function)
     @mock.patch('mc_srv_manager.config.Config.get_server_path', bogus_return_function)
     def testServerExistance(self) -> None:
         srv_manager = server_manager()
