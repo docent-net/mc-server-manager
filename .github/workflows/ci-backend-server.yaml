@@ -1,6 +1,6 @@
 name: CI for backend server
-on: 
-  push:
+on:
+  pull_request:
     branches:
     - master
     paths:
