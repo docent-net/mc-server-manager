@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import ListServers from '@/views/ListServers.vue';
+import ListServersView from '@/views/ListServers.vue';
+import APIHealthView from '@/views/APIHealth.vue';
 
 Vue.use(VueRouter);
 
@@ -8,12 +9,17 @@ const routes = [
   {
     path: '/',
     name: 'main',
-    component: ListServers,
+    component: ListServersView,
   },
   {
     path: '/list',
     name: 'list',
-    component: ListServers,
+    component: ListServersView,
+  },
+  {
+    path: '/api_health',
+    name: 'health',
+    component: APIHealthView,
   },
 ];
 

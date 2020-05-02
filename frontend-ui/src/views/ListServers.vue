@@ -1,17 +1,16 @@
 <template>
   <div class="servers-page">
-    <ListServers msg="MC server manager"/>
-    view test
+    <ListServersComponent/>
   </div>
 </template>
 
 <script>
-import ListServers from '@/components/ListServers.vue';
+import ListServersComponent from '@/components/ListServers.vue';
 
 export default {
   name: 'ListServersView',
   components: {
-    ListServers,
+    ListServersComponent,
   },
 };
 </script>
