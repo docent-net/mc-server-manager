@@ -3,14 +3,13 @@
 import os
 import click
 import mc_srv_manager.server_actions
-from mc_srv_manager.tester import test_environment
 
 @click.command()
 @click.argument('action')
 @click.option('--server_name', help="provide server name")
 def main(action: str, server_name: str) -> None:
     """ 
-    ACTION is one of: start, stop, restart, activate, test, create
+    ACTION is one of: start, stop, restart, activate, info, create
     
     """
     
@@ -18,8 +17,8 @@ def main(action: str, server_name: str) -> None:
         mc_srv_manager.server_actions.activate(server_name)
     elif action == 'create':
         mc_srv_manager.server_actions.create(server_name)
-    elif action == 'test':
-        test_environment()
+    elif action == 'info':
+        mc_srv_manager.server_actions.show_servers_info()
     elif action == 'start':
         mc_srv_manager.server_actions.start()
     elif action == 'stop':
