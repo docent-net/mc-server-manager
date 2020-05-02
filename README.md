@@ -45,7 +45,7 @@ Not implemented yet
 1. edit above service file to match your environment and needs
 1. install required Python libraries (`pip install --user -r requirements.txt`)
 1. confirm everything works fine: `cd backend; ./manage.py test` - this should list all servers found in **USER_HOMEDIR/servers-data directory** as well as should display current state of the Minecraft server.
-1. copy **config.ini** to **/USER_HOMEDIR/.minecraft/mc-manager-config** and edit its contents to match your environment**
+1. copy **config.ini.template** to **/USER_HOMEDIR/.minecraft/mc-manager-config** and edit its contents to match your environment**
 
 ### High level overview
 
