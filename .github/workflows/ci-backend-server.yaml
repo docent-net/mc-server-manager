@@ -3,6 +3,8 @@ on:
   pull_request:
     branches:
     - master
+    paths-ignore: 
+      - 'frontend-ui/*'
     paths:
       - '.github/workflows/ci-backend-server.yaml'
       - 'backend/*'
