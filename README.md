@@ -36,7 +36,8 @@ a container / virtual machine / physical server **having only 1 instance running
 
 **via UI**:
 
-Not implemented yet
+![UI](docs/UI.png)
+![UI](docs/UI-create-server.png)
 
 ### Installation and configuration
 
@@ -91,10 +92,28 @@ For now the whole machinery make a naive assumption that every server instance w
 
 ### Development
 
+
+#### Backend / API
+
+All backend components are stored inside of **backend** directory.
+
 For development purposes there is a **minecraft-server-stub.service** in this repo which might be used for testing various server scenarios.
 
-API server uses [Flask-API](https://www.flaskapi.org/) library. In order to start API server:
+API server uses [Flask-API](https://www.flaskapi.org/) library. 
+
+Developing backend services requires Python 3.8 and libraries installed from **requirements.txt**. Using [pyenv](https://github.com/pyenv/pyenv) is recommended.
+
+In order to start API server:
 
 `cd backend; python app.py`
 
-Above will start the server on TCP/8000 port.
+Above will start the server on 127.0.0.1:8000
+
+Run unit test by using: `python -m pytest`
+
+#### Frontend / UI
+
+UI uses [vue.js](https://vuejs.org/) library. All UI components are
+stored inside of **frontend-ui** directory.
+
+Enter **frotend-ui** directory and run **npm run serve** in order to run develoment server.

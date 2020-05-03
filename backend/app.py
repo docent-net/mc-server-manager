@@ -28,6 +28,8 @@ def get_servers():
     for srv_name in server_manager.list_server_instances():
         servers.append({'server_name': srv_name})
 
+    servers = sorted(servers, key=lambda k: k['server_name']) 
+
     return {
         'status': 'success',
         'servers': servers
@@ -39,6 +41,9 @@ def create_server():
     if not server_name:
         raise exceptions.ParseError('No server_name provided?')
 
+    if not server_manager.validate_server_name(server_name):
+        raise exceptions.ParseError(f'Server name is incorrect or too long: {server_name}! Use only letters, numbers, underscores and hyphens!')
+
     if server_manager.check_if_server_exists(server_name):
         raise exceptions.ParseError(f'Server named {server_name} already exists!')
 
@@ -48,7 +53,8 @@ def create_server():
         raise exceptions.ParseError(f'Could not create a new server: {e}')
 
     return {
-        'status': 'server_created'
+        'status': 'success',
+        'message': 'Server created!'
     }
 
 @app.route('/delete_server', methods=['DELETE'])

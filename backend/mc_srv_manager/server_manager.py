@@ -2,6 +2,7 @@
 
 from pathlib import Path
 from typing import Type, List
+import re
 from pystemd.systemd1 import Unit
 from pystemd.dbuslib import DBus
 from mc_srv_manager.config import Config
@@ -67,6 +68,19 @@ class server_manager:
 
         print('Can\t read server state via Dbus!')
         return False
+
+    def validate_server_name(self, srv_name: str) -> bool:
+        """ Method checks whether server name consists of allowed
+        characters only """
+
+        if len(srv_name) > 32:
+            return False
+
+        regexp = re.compile('[^0-9a-zA-Z_-]+')
+        if regexp.search(srv_name):
+            return False
+
+        return True
 
     def get_srv_template_files(self) -> Type[List]:
         """ Method returns list of all files (top-level) and dirs
