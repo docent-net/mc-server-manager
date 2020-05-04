@@ -5,7 +5,7 @@
         <alert :message="message" v-if="showMessage"></alert>
         <div class="btn-group" role="group">
         <button type="button" class="btn btn-success btn-sm" v-b-modal.server-modal>Create</button>
-        <button type="button" class="btn btn-warning btn-sm">Restart</button>
+        <button type="button" class="btn btn-warning btn-sm" v-b-modal.restart-modal>Restart</button>
         </div>
         <br><br>
         <table class="table table-hover">
@@ -33,7 +33,7 @@
           id="server-modal"
           title="Create a new server"
           hide-footer>
-    <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+    <b-form @submit="onCreateServerSubmit" @reset="onCreateServerReset" class="w-100">
     <b-form-group id="form-title-group"
                   label="Name (max 32 chars, only alphanumeric, hyphen, underscore):"
                   label-for="form-title-input">
@@ -51,6 +51,15 @@
       </b-form-group>
       <b-button type="submit" variant="primary">Create</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+  </b-modal>
+  <b-modal ref="restartServerModal"
+          id="restart-modal"
+          title="Restart server"
+          hide-footer>
+    <b-form @submit="onRestartServerSubmit" class="w-100">
+      <b-button type="submit" variant="primary">Restart</b-button>
+      <b-button type="button" @click="closeRestartServerModal" variant="danger">Cancel</b-button>
     </b-form>
   </b-modal>
   </div>
@@ -103,11 +112,11 @@ export default {
         });
       this.showMessage = true;
     },
-    initForm() {
+    initCreateServerForm() {
       this.createServerForm.serverName = '';
       this.createServerForm.activate = [];
     },
-    onSubmit(evt) {
+    onCreateServerSubmit(evt) {
       evt.preventDefault();
       this.$refs.createServerModal.hide();
       let activate = false;
@@ -117,13 +126,36 @@ export default {
         activate, // property shorthand
       };
       this.createServer(payload);
-      this.initForm();
+      this.initCreateServerForm();
     },
-    onReset(evt) {
+    onCreateServerReset(evt) {
       evt.preventDefault();
-      this.$refs.createServerModal.hide();
-      this.initForm();
+      this.$refs.restartServerModal.hide();
+      this.initCreateServerForm();
       this.showMessage = false;
+    },
+    restartServer(payload) {
+      const path = 'http://localhost:8000/restart_server';
+      axios.get(path)
+        .then(() => {
+          this.getServers();
+          this.message = 'Server restarted!';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.message = error;
+          this.getServers();
+        });
+      this.showMessage = true;
+    },
+    onRestartServerSubmit(evt) {
+      evt.preventDefault();
+      this.$refs.restartServerModal.hide();
+      this.restartServer();
+    },
+    closeRestartServerModal() {
+      this.$refs.restartServerModal.hide();
     },
   },
   created() {
