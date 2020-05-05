@@ -31,6 +31,7 @@ a container / virtual machine / physical server **having only 1 instance running
 - api methods:
     - /list_servers
     - /activate_server (POST, GET: <server_name=server_name>)
+    - /get_active_server (GET)
     - /delete_server (DELETE: <server_name=server_name>)
     - /create_server (PUT: <server_name=server_name>)
     - /restart_server (POST, GET)
