@@ -21,6 +21,19 @@ server_manager = server_manager()
 def ping_pong():
     return {'status': 'OK'}
 
+@app.route('/get_active_server', methods=['GET'])
+def get_active_server():
+    
+    try:
+        active_server = server_manager.get_active_server_name()
+    except Exception as e:
+        raise exceptions.ParseError(f'Could not fetch avtive server name: {e}')
+    
+    return {
+        'status': 'success',
+        'activeServer': active_server
+    }
+
 @app.route('/get_servers', methods=['GET'])
 def get_servers():
     
