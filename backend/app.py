@@ -21,6 +21,19 @@ server_manager = server_manager()
 def ping_pong():
     return {'status': 'OK'}
 
+@app.route('/get_active_server', methods=['GET'])
+def get_active_server():
+    
+    try:
+        active_server = server_manager.get_active_server_name()
+    except Exception as e:
+        raise exceptions.ParseError(f'Could not fetch avtive server name: {e}')
+    
+    return {
+        'status': 'success',
+        'activeServer': active_server
+    }
+
 @app.route('/get_servers', methods=['GET'])
 def get_servers():
     
@@ -69,6 +82,28 @@ def delete_server():
     # TODO: removing server
     raise exceptions.NotFound('Not implemented')
 
+@app.route('/restart_server', methods=['POST','GET'])
+def restart_server():
+    """
+    This method runs whole flow of restarting a server
+    """
+
+    if server_manager.is_server_running():
+        try:
+            server_manager.stop_server()
+        except Exception as e:
+            raise exceptions.ParseError(f'Could not stop server: {e}')
+ 
+    try:
+        server_manager.start_server()
+    except Exception as e:
+        raise exceptions.ParseError(f'Could not start server: {e}')
+
+    return {
+        'status': 'success',
+        'message': 'Server restarted!'
+    }
+    
 @app.route('/activate_server', methods=['POST','GET'])
 def activate_server():
     """
@@ -92,7 +127,10 @@ def activate_server():
         raise exceptions.ParseError("Can't remove symlinks to the current version of the server")
 
     if server_manager.start_server():
-        return {'status': 'server_activated'}
+        return {
+            'status': 'success',
+            'message': 'Server activated!'
+        }
     else:
         raise exceptions.ParseError('Server was activated but could not be started')
 

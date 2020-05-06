@@ -5,7 +5,9 @@
         <alert :message="message" v-if="showMessage"></alert>
         <div class="btn-group" role="group">
         <button type="button" class="btn btn-success btn-sm" v-b-modal.server-modal>Create</button>
-        <button type="button" class="btn btn-warning btn-sm">Restart</button>
+        <button type="button" class="btn btn-warning btn-sm" v-b-modal.restart-modal>
+        Restart {{ activeServer }}
+        </button>
         </div>
         <br><br>
         <table class="table table-hover">
@@ -20,7 +22,8 @@
               <td>{{ server.server_name }}</td>
               <td>
                 <div class="btn-group" role="group">
-                  <button type="button" class="btn btn-warning btn-sm">Activate</button>
+                  <!-- eslint-disable-next-line max-len -->
+                  <button v-b-modal.activate-modal @click="setActivationServer(server.server_name)" v-if="server.server_name != activeServer" type="button" class="btn btn-warning btn-sm">Activate</button>
                   <button type="button" class="btn btn-danger btn-sm">Delete</button>
                 </div>
               </td>
@@ -33,7 +36,7 @@
           id="server-modal"
           title="Create a new server"
           hide-footer>
-    <b-form @submit="onSubmit" @reset="onReset" class="w-100">
+    <b-form @submit="onCreateServerSubmit" @reset="onCreateServerReset" class="w-100">
     <b-form-group id="form-title-group"
                   label="Name (max 32 chars, only alphanumeric, hyphen, underscore):"
                   label-for="form-title-input">
@@ -53,6 +56,24 @@
       <b-button type="reset" variant="danger">Reset</b-button>
     </b-form>
   </b-modal>
+  <b-modal ref="restartServerModal"
+          id="restart-modal"
+          title="Restart server"
+          hide-footer>
+    <b-form @submit="onRestartServerSubmit" class="w-100">
+      <b-button type="submit" variant="primary">Restart {{ activeServer }}</b-button>
+      <b-button type="button" @click="closeRestartServerModal" variant="danger">Cancel</b-button>
+    </b-form>
+  </b-modal>
+  <b-modal ref="activateServerModal"
+          id="activate-modal"
+          title="Activate server"
+          hide-footer>
+    <b-form @submit="onActivateServerSubmit" class="w-100">
+      <b-button type="submit" variant="primary">Activate {{ activationServerName }}</b-button>
+      <b-button type="button" @click="closeActivateServerModal" variant="danger">Cancel</b-button>
+    </b-form>
+  </b-modal>
   </div>
 </template>
 
@@ -65,6 +86,8 @@ export default {
   data() {
     return {
       servers: '',
+      activeServer: '',
+      activationServerName: '',
       createServerForm: {
         serverName: '',
         activate: [],
@@ -103,11 +126,11 @@ export default {
         });
       this.showMessage = true;
     },
-    initForm() {
+    initCreateServerForm() {
       this.createServerForm.serverName = '';
       this.createServerForm.activate = [];
     },
-    onSubmit(evt) {
+    onCreateServerSubmit(evt) {
       evt.preventDefault();
       this.$refs.createServerModal.hide();
       let activate = false;
@@ -117,16 +140,79 @@ export default {
         activate, // property shorthand
       };
       this.createServer(payload);
-      this.initForm();
+      this.initCreateServerForm();
     },
-    onReset(evt) {
+    onCreateServerReset(evt) {
       evt.preventDefault();
-      this.$refs.createServerModal.hide();
-      this.initForm();
+      this.$refs.restartServerModal.hide();
+      this.initCreateServerForm();
       this.showMessage = false;
+    },
+    restartServer() {
+      const path = 'http://localhost:8000/restart_server';
+      axios.get(path)
+        .then(() => {
+          this.getServers();
+          this.message = 'Server restarted!';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.message = error;
+          this.getServers();
+        });
+      this.showMessage = true;
+    },
+    onRestartServerSubmit(evt) {
+      evt.preventDefault();
+      this.$refs.restartServerModal.hide();
+      this.restartServer();
+    },
+    closeRestartServerModal() {
+      this.$refs.restartServerModal.hide();
+    },
+    getActiveServer() {
+      const path = 'http://localhost:8000/get_active_server';
+      axios
+        .get(path)
+        // eslint-disable-next-line arrow-parens
+        .then(response => {
+          this.activeServer = response.data.activeServer;
+        });
+    },
+    activateServer() {
+      const payload = {
+        server_name: this.activationServerName,
+      };
+      const path = 'http://localhost:8000/activate_server';
+      axios.post(path, payload)
+        .then(() => {
+          this.activeServer = this.activationServerName;
+          this.getServers();
+          this.message = 'Server activated!';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.message = error;
+          this.getServers();
+        });
+      this.showMessage = true;
+    },
+    setActivationServer(serverName) {
+      this.activationServerName = serverName;
+    },
+    onActivateServerSubmit(evt) {
+      evt.preventDefault();
+      this.$refs.activateServerModal.hide();
+      this.activateServer();
+    },
+    closeActivateServerModal() {
+      this.$refs.activateServerModal.hide();
     },
   },
   created() {
+    this.getActiveServer();
     this.getServers();
   },
 };
