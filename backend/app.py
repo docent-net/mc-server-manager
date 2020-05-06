@@ -96,6 +96,23 @@ def activate_server():
     else:
         raise exceptions.ParseError('Server was activated but could not be started')
 
+@app.route('/secure_server_instance', methods=['POST','GET'])
+def secure_server_instance():
+    """
+    This method runs whole flow of securing a server instance
+    """
+    server_name = str(request.data.get('server_name', ''))
+    if not server_name:
+        raise exceptions.ParseError('No server_name provided?')
+
+    if not server_manager.check_if_server_exists(server_name):
+        raise exceptions.ParseError(f'Server named {server_name} doesn\'t exist!')
+
+    # secure this server
+    if server_manager.secure_server_instance(server_name):
+        return {'status': 'server_activated'}
+    else:
+        raise exceptions.ParseError("Can't secure this server!")
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)

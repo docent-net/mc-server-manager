@@ -157,3 +157,21 @@ def show_servers_info() -> None:
         print(f'Looks like server system service is stopped: {server_state}')
 
     sys.exit(0)
+
+def secure_server_instance(server_name: str) -> None:
+    """
+    This method runs whole flow of securing a server instance
+    """
+    srv_mgr = server_manager()
+
+    if not srv_mgr.check_if_server_exists(server_name):
+        print(f"Server {server_name} doesn't exist!")
+        sys.exit(1)
+
+    # secure this server
+    if srv_mgr.secure_server_instance(server_name):
+        print('Server instance secured!')
+        sys.exit(0)
+    else:
+        print("Could not secure this server instance!")
+        sys.exit(1)

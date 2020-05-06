@@ -10,6 +10,8 @@ from mc_srv_manager.utils import copytree
 
 
 class server_manager:
+    SECURE_SRV_LOCK_NAME='.mc-server-manager-secure.lock'
+
     def __init__(self) -> None:
         self.__config = Config()
         self.__current_server_name = self.__read_active_server_name()
@@ -156,8 +158,8 @@ class server_manager:
                     server_path = f'{self.__config.get_servers_data_path()}/{server_name}/{file}'
                     # print(f'Creating symlink from {str(file_obj)} to {server_path}')
                     file_obj.symlink_to(server_path)
-                except Exception:
-                    print(f"Cant't create symlink for {server_path}!")
+                except Exception as e:
+                    print(f"Cant't create symlink for {server_path}: {e}!")
                     return False
             else:
                 print(f"Looks like symlink {str(file_obj)} already exist!")
@@ -182,8 +184,8 @@ class server_manager:
             try:
                 # print(f'Removing file {file_obj}')
                 file_obj.unlink(missing_ok = True)
-            except Exception:
-                print(f"Cant't remove dir {file}!")
+            except Exception as e:
+                print(f"Cant't remove dir {file}: {e}!")
                 return False
 
         self.__update_current_server_name('none')
@@ -205,4 +207,31 @@ class server_manager:
             print(f"Cant't create new server {server_name}: {e}!")
             return False
         
+        return True
+
+    def secure_server_instance(self, server_name: str) -> bool:
+        """
+        This method creates hidden file '.mc-server-manager-secure.lock'
+        inside of the <server_name> data directory in order to mark this 
+        server instance as secured.
+
+        When secured mc-server-manager will not delete this server by any 
+        means.
+        """
+
+        try:
+            lock_file_path = f'{self.__config.get_servers_data_path()}/{server_name}/{self.SECURE_SRV_LOCK_NAME}'
+            with open(lock_file_path, "w") as file:
+                msg = [
+                    'This is a security lock created by mc-server-manager.',
+                    'While this file exists mc-server-manager will not allow',
+                    'to delete this server instance.',
+                    'If you delete this file mc-server-manager user will be',
+                    'able to delete this server instance.'
+                ]
+                file.write("\n".join(msg))
+        except Exception as e:
+            print(f"Cant't create server insrtance secure lock {lock_file_path}: {e}!")
+            return False
+
         return True

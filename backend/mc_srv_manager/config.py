@@ -17,6 +17,10 @@ class Config:
         return Path(f"{str(Path.home())}/.minecraft/mc-manager-config")
 
     def get_server_path(self) -> str:
+        """
+        This method returns path to the main instance of the
+        game server.
+        """
         try:
             srv_path = self.config['env']['server_path']
         except KeyError:
@@ -25,6 +29,11 @@ class Config:
         return srv_path
 
     def get_servers_data_path(self) -> str:
+        """
+        This method returns path to the directory where data directories
+        of all server instances are placed
+        """
+        
         try:
             data_path = self.config['env']['servers_data_path']
         except KeyError:
