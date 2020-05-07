@@ -24,7 +24,8 @@
                 <div class="btn-group" role="group">
                   <!-- eslint-disable-next-line max-len -->
                   <button v-b-modal.activate-modal @click="setActivationServer(server.server_name)" v-if="server.server_name != activeServer" type="button" class="btn btn-warning btn-sm">Activate</button>
-                  <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                  <!-- eslint-disable-next-line max-len -->
+                  <button type="button" class="btn btn-danger btn-sm" v-if="(server.server_secured != true) && (activeServer != server.server_name)">Delete</button>
                   <!-- eslint-disable-next-line max-len -->
                   <button v-b-modal.secure-modal @click="setSecureServer(server.server_name)" v-if="server.server_secured != true" type="button" class="btn btn-warning btn-sm">Secure</button>
                 </div>

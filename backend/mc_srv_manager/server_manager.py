@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Type, List
 import re
+import shutil
 from pystemd.systemd1 import Unit
 from pystemd.dbuslib import DBus
 from mc_srv_manager.config import Config
@@ -213,6 +214,18 @@ class server_manager:
         
         return True
 
+    def is_server_secured(self, server_name: str) -> bool:
+        """
+        This method checks whether server is secured or not. Secured server
+        may not be deleted.
+        """
+
+        lock_file_path = f'{self.__config.get_servers_data_path()}/{server_name}/{self.SECURE_SRV_LOCK_NAME}'
+        if Path(lock_file_path).exists():
+            return True
+
+        return False
+
     def secure_server_instance(self, server_name: str) -> bool:
         """
         This method creates hidden file '.mc-server-manager-secure.lock'
@@ -236,6 +249,32 @@ class server_manager:
                 file.write("\n".join(msg))
         except Exception as e:
             print(f"Cant't create server insrtance secure lock {lock_file_path}: {e}!")
+            return False
+
+        return True
+
+    def delete_server_instance(self, server_name: str) -> bool:
+        """ 
+        Method deletes all data of server instance <server_name>.
+        Secured server instances will not be removed.
+        """
+
+        server_path = f'{self.__config.get_servers_data_path()}/{server_name}'
+
+        # does this server instance exist at all?
+        if not Path(server_path).exists():
+            print('Can\'t remove this server instance - it doesn\'t exist!')
+            return False
+
+        # is this server instance secured?
+        if self.is_server_secured(server_name):
+            print('Can\'t remove this server instance - it is protected agains deletion!')
+            return False
+
+        try:
+            shutil.rmtree(server_path)
+        except Exception as e:
+            print(f'Can\'t remove this server instance data directory: {e}')
             return False
 
         return True
