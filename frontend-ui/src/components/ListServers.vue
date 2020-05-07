@@ -25,6 +25,8 @@
                   <!-- eslint-disable-next-line max-len -->
                   <button v-b-modal.activate-modal @click="setActivationServer(server.server_name)" v-if="server.server_name != activeServer" type="button" class="btn btn-warning btn-sm">Activate</button>
                   <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                  <!-- eslint-disable-next-line max-len -->
+                  <button v-b-modal.secure-modal @click="setSecureServer(server.server_name)" v-if="server.server_secured != true" type="button" class="btn btn-warning btn-sm">Secure</button>
                 </div>
               </td>
             </tr>
@@ -60,6 +62,9 @@
           id="restart-modal"
           title="Restart server"
           hide-footer>
+    <!-- eslint-disable-next-line no-trailing-spaces -->
+    <p>This will restart server {{ activeServer }}. 
+      Game will be unavailable for a while.</p>
     <b-form @submit="onRestartServerSubmit" class="w-100">
       <b-button type="submit" variant="primary">Restart {{ activeServer }}</b-button>
       <b-button type="button" @click="closeRestartServerModal" variant="danger">Cancel</b-button>
@@ -69,9 +74,29 @@
           id="activate-modal"
           title="Activate server"
           hide-footer>
+    <!-- eslint-disable-next-line no-trailing-spaces -->
+    <p>This will make the server {{ activationServerName }} active. 
+      This operation will restart Minecraft server upon activation.</p>
     <b-form @submit="onActivateServerSubmit" class="w-100">
       <b-button type="submit" variant="primary">Activate {{ activationServerName }}</b-button>
       <b-button type="button" @click="closeActivateServerModal" variant="danger">Cancel</b-button>
+    </b-form>
+  </b-modal>
+  <b-modal ref="secureServerModal"
+          id="secure-modal"
+          title="Secure server"
+          hide-footer>
+    <!-- eslint-disable-next-line no-trailing-spaces -->
+    <p>This will secure the server {{ secureServerName }}. 
+      You will not be able to delete this server from server manager.
+      You will need to remove this server data manually from the filesystem.
+    </p>
+    <p>In case you'd like to remove this security lock you will need to
+      delete <b>.mc-server-manager-secure.lock</b> file from the server
+      data directory.</p>
+    <b-form @submit="onSecureServerSubmit" class="w-100">
+      <b-button type="submit" variant="primary">Secure {{ secureServerName }}</b-button>
+      <b-button type="button" @click="closeSecureServerModal" variant="danger">Cancel</b-button>
     </b-form>
   </b-modal>
   </div>
@@ -88,6 +113,7 @@ export default {
       servers: '',
       activeServer: '',
       activationServerName: '',
+      secureServerName: '',
       createServerForm: {
         serverName: '',
         activate: [],
@@ -209,6 +235,35 @@ export default {
     },
     closeActivateServerModal() {
       this.$refs.activateServerModal.hide();
+    },
+    secureServer() {
+      const payload = {
+        server_name: this.secureServerName,
+      };
+      const path = 'http://localhost:8000/secure_server_instance';
+      axios.post(path, payload)
+        .then(() => {
+          this.getServers();
+          this.message = 'Server secured!';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.message = error;
+          this.getServers();
+        });
+      this.showMessage = true;
+    },
+    setSecureServer(serverName) {
+      this.secureServerName = serverName;
+    },
+    onSecureServerSubmit(evt) {
+      evt.preventDefault();
+      this.$refs.secureServerModal.hide();
+      this.secureServer();
+    },
+    closeSecureServerModal() {
+      this.$refs.secureServerModal.hide();
     },
   },
   created() {

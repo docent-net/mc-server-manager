@@ -139,11 +139,15 @@ class server_manager:
         # TODO: verify whether each server's files are in sync with server
         # template (nothing is missing)
 
-        files = []
+        srvs = []
         pathlist = Path(self.__config.get_servers_data_path()).glob('*')
         for path in pathlist:
-            files.append(str(path.name))
-        return files
+            secureFlag = Path(str(path), self.SECURE_SRV_LOCK_NAME).exists()
+            srvs.append({
+                'name': str(path.name),
+                'secured': secureFlag
+            })
+        return srvs
 
     def create_new_version_symlinks(self, server_name: str) -> bool:
         """ This method removes symlinks pointing at current server

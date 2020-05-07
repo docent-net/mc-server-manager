@@ -38,8 +38,11 @@ def get_active_server():
 def get_servers():
     
     servers = []
-    for srv_name in server_manager.list_server_instances():
-        servers.append({'server_name': srv_name})
+    for srv in server_manager.list_server_instances():
+        servers.append({
+            'server_name': srv['name'],
+            'server_secured': srv['secured']            
+            })
 
     servers = sorted(servers, key=lambda k: k['server_name']) 
 

@@ -140,7 +140,7 @@ def show_servers_info() -> None:
     server_instances = srv_mgr.list_server_instances()
     if server_instances:
         print(f"Found {len(server_instances)} server(s):\n")
-        print('\n'.join(f'{_srv}' for _srv in server_instances) + "\n")
+        print('\n'.join(f'{_srv['name']}' for _srv in server_instances) + "\n")
     else:
         print("No server instances found. Create a new server?\n")
 
