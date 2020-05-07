@@ -140,7 +140,7 @@ def show_servers_info() -> None:
     server_instances = srv_mgr.list_server_instances()
     if server_instances:
         print(f"Found {len(server_instances)} server(s):\n")
-        print('\n'.join(f'{_srv}' for _srv in server_instances) + "\n")
+        print('\n'.join(f'{_srv['name']}' for _srv in server_instances) + "\n")
     else:
         print("No server instances found. Create a new server?\n")
 
@@ -157,3 +157,21 @@ def show_servers_info() -> None:
         print(f'Looks like server system service is stopped: {server_state}')
 
     sys.exit(0)
+
+def secure_server_instance(server_name: str) -> None:
+    """
+    This method runs whole flow of securing a server instance
+    """
+    srv_mgr = server_manager()
+
+    if not srv_mgr.check_if_server_exists(server_name):
+        print(f"Server {server_name} doesn't exist!")
+        sys.exit(1)
+
+    # secure this server
+    if srv_mgr.secure_server_instance(server_name):
+        print('Server instance secured!')
+        sys.exit(0)
+    else:
+        print("Could not secure this server instance!")
+        sys.exit(1)

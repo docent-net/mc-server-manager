@@ -9,7 +9,7 @@ import mc_srv_manager.server_actions
 @click.option('--server_name', help="provide server name")
 def main(action: str, server_name: str) -> None:
     """ 
-    ACTION is one of: start, stop, restart, activate, info, create
+    ACTION is one of: start, stop, restart, activate, info, create, secure
     
     """
     
@@ -25,6 +25,8 @@ def main(action: str, server_name: str) -> None:
         mc_srv_manager.server_actions.stop()
     elif action == 'restart':
         mc_srv_manager.server_actions.restart()
+    elif action == 'secure':
+        mc_srv_manager.server_actions.secure_server_instance(server_name)
 
 
 if __name__ == "__main__":

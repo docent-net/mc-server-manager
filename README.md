@@ -23,18 +23,20 @@ a container / virtual machine / physical server **having only 1 instance running
 - stop server: `./manage.py stop`
 - start server: `./manage.py start`
 - restart server: `./manage.py restart`
+- secure server: `./manage.py secure --server_name=<server_name>`
 - create a new server from template: `./manage.py create --server_name=<server_name>`
 
 **via API**:
 
 - start server (will bind to 8000 port): `cd backend; python app.py`
 - api methods:
-    - /list_servers
+    - /health (GET)
+    - /get_servers (GET)
     - /activate_server (POST, GET: <server_name=server_name>)
-    - /get_active_server (GET)
     - /delete_server (DELETE: <server_name=server_name>)
     - /create_server (PUT: <server_name=server_name>)
     - /restart_server (POST, GET)
+    - /secure_server_instance (POST, GET: <server_name=server_name>)
 
 **via UI**:
 
