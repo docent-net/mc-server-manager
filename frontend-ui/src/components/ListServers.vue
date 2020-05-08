@@ -1,3 +1,4 @@
+<!-- eslint-disable max-len, no-trailing-spaces -->
 <template>
   <div class="container">
     <div class="row">
@@ -13,7 +14,7 @@
         <table class="table table-hover">
           <thead>
             <tr>
-              <th scope="col">Server name</th>
+              <th scope="col">Currently active server: {{ activeServer }}</th>
               <th></th>
             </tr>
           </thead>
@@ -22,11 +23,26 @@
               <td>{{ server.server_name }}</td>
               <td>
                 <div class="btn-group" role="group">
-                  <!-- eslint-disable-next-line max-len -->
-                  <button v-b-modal.activate-modal @click="setActivationServer(server.server_name)" v-if="server.server_name != activeServer" type="button" class="btn btn-warning btn-sm">Activate</button>
-                  <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                  <!-- eslint-disable-next-line max-len -->
-                  <button v-b-modal.secure-modal @click="setSecureServer(server.server_name)" v-if="server.server_secured != true" type="button" class="btn btn-warning btn-sm">Secure</button>
+                  <button v-b-modal.activate-modal 
+                    @click="setActivationServer(server.server_name)" 
+                    v-if="server.server_name != activeServer" 
+                    type="button" 
+                    class="btn btn-warning btn-sm">
+                    Activate
+                  </button>
+                  <button v-b-modal.delete-modal type="button" 
+                    @click="setDeleteServer(server.server_name)" 
+                    class="btn btn-danger btn-sm" 
+                    v-if="(server.server_secured != true) && (activeServer != server.server_name)">
+                    Delete
+                  </button>
+                  <button v-b-modal.secure-modal 
+                    @click="setSecureServer(server.server_name)" 
+                    v-if="server.server_secured != true" 
+                    type="button" 
+                    class="btn btn-warning btn-sm">
+                    Secure
+                  </button>
                 </div>
               </td>
             </tr>
@@ -62,7 +78,6 @@
           id="restart-modal"
           title="Restart server"
           hide-footer>
-    <!-- eslint-disable-next-line no-trailing-spaces -->
     <p>This will restart server {{ activeServer }}. 
       Game will be unavailable for a while.</p>
     <b-form @submit="onRestartServerSubmit" class="w-100">
@@ -74,9 +89,9 @@
           id="activate-modal"
           title="Activate server"
           hide-footer>
-    <!-- eslint-disable-next-line no-trailing-spaces -->
-    <p>This will make the server {{ activationServerName }} active. 
-      This operation will restart Minecraft server upon activation.</p>
+    <p>This will stop the current server (<b>{{ activeServer}}</b>), make 
+      the server <b>{{ activationServerName }}</b> active and start it.
+    </p>
     <b-form @submit="onActivateServerSubmit" class="w-100">
       <b-button type="submit" variant="primary">Activate {{ activationServerName }}</b-button>
       <b-button type="button" @click="closeActivateServerModal" variant="danger">Cancel</b-button>
@@ -86,7 +101,6 @@
           id="secure-modal"
           title="Secure server"
           hide-footer>
-    <!-- eslint-disable-next-line no-trailing-spaces -->
     <p>This will secure the server {{ secureServerName }}. 
       You will not be able to delete this server from server manager.
       You will need to remove this server data manually from the filesystem.
@@ -97,6 +111,17 @@
     <b-form @submit="onSecureServerSubmit" class="w-100">
       <b-button type="submit" variant="primary">Secure {{ secureServerName }}</b-button>
       <b-button type="button" @click="closeSecureServerModal" variant="danger">Cancel</b-button>
+    </b-form>
+  </b-modal>
+  <b-modal ref="deleteServerModal"
+          id="delete-modal"
+          title="Delete server"
+          hide-footer>
+    <p>This will completely delete server <b>{{ deleteServerName }}</b>!</p>
+    <p>All data of this server will be lost!</p>
+    <b-form @submit="onDeleteServerSubmit" class="w-100">
+      <b-button type="submit" variant="primary">Delete {{ deleteServerName }}</b-button>
+      <b-button type="button" @click="closeDeleteServerModal" variant="danger">Cancel</b-button>
     </b-form>
   </b-modal>
   </div>
@@ -114,6 +139,7 @@ export default {
       activeServer: '',
       activationServerName: '',
       secureServerName: '',
+      deleteServerName: '',
       createServerForm: {
         serverName: '',
         activate: [],
@@ -264,6 +290,32 @@ export default {
     },
     closeSecureServerModal() {
       this.$refs.secureServerModal.hide();
+    },
+    deleteServer() {
+      const path = `http://localhost:8000/delete_server_instance/${this.deleteServerName}`;
+      axios.delete(path)
+        .then(() => {
+          this.getServers();
+          this.message = 'Server deleted!';
+        })
+        .catch((error) => {
+          // eslint-disable-next-line
+          console.log(error);
+          this.message = error;
+          this.getServers();
+        });
+      this.showMessage = true;
+    },
+    setDeleteServer(serverName) {
+      this.deleteServerName = serverName;
+    },
+    onDeleteServerSubmit(evt) {
+      evt.preventDefault();
+      this.$refs.deleteServerModal.hide();
+      this.deleteServer();
+    },
+    closeDeleteServerModal() {
+      this.$refs.deleteServerModal.hide();
     },
   },
   created() {
