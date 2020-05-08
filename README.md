@@ -24,6 +24,7 @@ a container / virtual machine / physical server **having only 1 instance running
 - start server: `./manage.py start`
 - restart server: `./manage.py restart`
 - secure server: `./manage.py secure --server_name=<server_name>`
+- delete server: `./manage.py delete --server_name=<server_name>`
 - create a new server from template: `./manage.py create --server_name=<server_name>`
 
 **via API**:
@@ -37,6 +38,7 @@ a container / virtual machine / physical server **having only 1 instance running
     - /create_server (PUT: <server_name=server_name>)
     - /restart_server (POST, GET)
     - /secure_server_instance (POST, GET: <server_name=server_name>)
+    - /delete_server_instance/<server_name> (DELETE)
 
 **via UI**:
 
