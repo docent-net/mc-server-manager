@@ -73,17 +73,22 @@ def create_server():
         'message': 'Server created!'
     }
 
-@app.route('/delete_server', methods=['DELETE'])
-def delete_server():
-    server_name = str(request.data.get('server_name', ''))
+@app.route('/delete_server_instance/<server_name>', methods=['DELETE'])
+def delete_server(server_name):
     if not server_name:
         raise exceptions.ParseError('No server_name provided?')
 
     if not server_manager.check_if_server_exists(server_name):
         raise exceptions.ParseError(f'Server named {server_name} doesn\'t exist!')
 
-    # TODO: removing server
-    raise exceptions.NotFound('Not implemented')
+    # delete this server
+    if server_manager.delete_server_instance(server_name):
+        return {
+            'status': 'success',
+            'message': 'Server instance deleted!'
+        }
+    else:
+        raise exceptions.ParseError("Could not delete this server instance!")
 
 @app.route('/restart_server', methods=['POST','GET'])
 def restart_server():
