@@ -66,7 +66,7 @@
         </b-form-input>
       </b-form-group>
       <b-form-group id="form-activate-group">
-        <b-form-checkbox-group v-model="createServerForm.activateServer" id="form-checks">
+        <b-form-checkbox-group v-model="createServerForm.activateOnCreation" id="form-checks">
           <b-form-checkbox value="true">Activate?</b-form-checkbox>
         </b-form-checkbox-group>
       </b-form-group>
@@ -142,7 +142,7 @@ export default {
       deleteServerName: '',
       createServerForm: {
         serverName: '',
-        activate: [],
+        activateOnCreation: [],
       },
       message: '',
       showMessage: false,
@@ -177,19 +177,20 @@ export default {
           this.getServers();
         });
       this.showMessage = true;
+      this.activeServer = payload.server_name;
     },
     initCreateServerForm() {
       this.createServerForm.serverName = '';
-      this.createServerForm.activate = [];
+      this.createServerForm.activateOnCreation = [];
     },
     onCreateServerSubmit(evt) {
       evt.preventDefault();
       this.$refs.createServerModal.hide();
-      let activate = false;
-      if (this.createServerForm.activate[0]) activate = true;
+      let activateOnCreation = false;
+      if (this.createServerForm.activateOnCreation[0]) activateOnCreation = true;
       const payload = {
         server_name: this.createServerForm.serverName,
-        activate, // property shorthand
+        activate: activateOnCreation, // property shorthand
       };
       this.createServer(payload);
       this.initCreateServerForm();
