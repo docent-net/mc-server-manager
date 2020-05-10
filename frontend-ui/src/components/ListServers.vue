@@ -177,7 +177,7 @@ export default {
           this.getServers();
         });
       this.showMessage = true;
-      this.activeServer = payload.serverName;
+      this.activeServer = payload.server_name;
     },
     initCreateServerForm() {
       this.createServerForm.serverName = '';
