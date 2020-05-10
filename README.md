@@ -97,6 +97,14 @@ For now the whole machinery make a naive assumption that every server instance w
 
 ### Development
 
+#### git hooks
+
+There is a file **git-hooks/pre-commit** which contains pre-commit hooks
+used in this repo for running all required unit tests, lint checkers etc.
+
+Copy it to **.git/hooks/pre-commit** in order to have it run on commit.
+
+Same tests will be run before Pull-Request review.
 
 #### Backend / API
 
@@ -114,11 +122,17 @@ In order to start API server:
 
 Above will start the server on 127.0.0.1:8000
 
-Run unit test by using: `python -m pytest`
-
 #### Frontend / UI
 
 UI uses [vue.js](https://vuejs.org/) library. All UI components are
 stored inside of **frontend-ui** directory.
 
-Enter **frotend-ui** directory and run **npm run serve** in order to run develoment server.
+In order to prepare your frontend development environment:
+
+```bash
+$ cd ftontend-ui
+$ npm install
+$ npm run server
+```
+
+Now you should have your frontend service running in [http://localhost:8080/](http://localhost:8080/)
