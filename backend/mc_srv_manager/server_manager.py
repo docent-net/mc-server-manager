@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from pathlib import Path
-from typing import Type, List
+from typing import Type, List, Any
 import re
 import shutil
 from pystemd.systemd1 import Unit
@@ -85,7 +85,7 @@ class server_manager:
 
         return True
 
-    def get_srv_template_files(self) -> Type[List]:
+    def get_srv_template_files(self) -> Any:
         """ Method returns list of all files (top-level) and dirs
         from a server template """
 
@@ -102,7 +102,7 @@ class server_manager:
 
         return self.__current_server_name
 
-    def __update_current_server_name(self, server_name:str = False) -> None:
+    def __update_current_server_name(self, server_name:str = '') -> None:
         """
         This method updates state information about server, which is
         currently symlinked
@@ -124,14 +124,14 @@ class server_manager:
             srv_symlink_destination = srv_symlink.resolve(True)
         # If symlink was not found then there is no active server
         except FileNotFoundError:
-            return False
+            return ''
         except Exception as e:
             print(f"Can't get active server name: {e}")
-            return False
+            return ''
 
         return str(srv_symlink_destination.parent.name)
 
-    def list_server_instances(self) -> Type[List]:
+    def list_server_instances(self) -> Any:
         """ 
         This method iterates over servers-data directory and 
         returns list of found servers.
