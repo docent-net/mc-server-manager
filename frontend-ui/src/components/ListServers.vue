@@ -140,6 +140,7 @@ export default {
       activationServerName: '',
       secureServerName: '',
       deleteServerName: '',
+      APIAddr: '',
       createServerForm: {
         serverName: '',
         activateOnCreation: [],
@@ -153,7 +154,7 @@ export default {
   },
   methods: {
     getServers() {
-      const path = 'http://localhost:8000/get_servers';
+      const path = `${this.APIAddr}/get_servers`;
       axios.get(path)
         .then((res) => {
           this.servers = res.data.servers;
@@ -164,7 +165,7 @@ export default {
         });
     },
     createServer(payload) {
-      const path = 'http://localhost:8000/create_server';
+      const path = `${this.APIAddr}/create_server`;
       axios.put(path, payload)
         .then(() => {
           this.getServers();
@@ -202,7 +203,7 @@ export default {
       this.showMessage = false;
     },
     restartServer() {
-      const path = 'http://localhost:8000/restart_server';
+      const path = `${this.APIAddr}/restart_server`;
       axios.get(path)
         .then(() => {
           this.getServers();
@@ -225,7 +226,7 @@ export default {
       this.$refs.restartServerModal.hide();
     },
     getActiveServer() {
-      const path = 'http://localhost:8000/get_active_server';
+      const path = `${this.APIAddr}/get_active_server`;
       axios
         .get(path)
         // eslint-disable-next-line arrow-parens
@@ -237,7 +238,7 @@ export default {
       const payload = {
         server_name: this.activationServerName,
       };
-      const path = 'http://localhost:8000/activate_server';
+      const path = `${this.APIAddr}/activate_server`;
       axios.post(path, payload)
         .then(() => {
           this.activeServer = this.activationServerName;
@@ -318,8 +319,12 @@ export default {
     closeDeleteServerModal() {
       this.$refs.deleteServerModal.hide();
     },
+    setAPIServerAddr() {
+      this.APIAddr = process.env.VUE_APP_API_ADDR;
+    },
   },
   created() {
+    this.setAPIServerAddr();
     this.getActiveServer();
     this.getServers();
   },

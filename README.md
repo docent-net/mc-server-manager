@@ -47,11 +47,19 @@ a container / virtual machine / physical server **having only 1 instance running
 ### Installation and configuration
 
 1. clone this repository
-1. copy **minecraft-server.service** to the **/USER_HOMEDIR/.config/systemd/user/minecraft-server.service
-1. edit above service file to match your environment and needs
-1. install required Python libraries (`pip install --user -r requirements.txt`)
-1. confirm everything works fine: `cd backend; ./manage.py test` - this should list all servers found in **USER_HOMEDIR/servers-data directory** as well as should display current state of the Minecraft server.
-1. copy **config.ini.template** to **/USER_HOMEDIR/.minecraft/mc-manager-config** and edit its contents to match your environment**
+1. For backend/API server:
+  1. copy **minecraft-server.service** to the **/USER_HOMEDIR/.config/systemd/user/minecraft-server.service
+  1. edit above service file to match your environment and needs
+  1. install required Python libraries (`pip install --user -r requirements.txt`)
+  1. confirm everything works fine: `cd backend; ./manage.py test` - this should list all servers found in **USER_HOMEDIR/servers-data directory** as well as should display current state of the Minecraft server.
+  1. copy **config.ini.template** to **/USER_HOMEDIR/.minecraft/mc-manager-config** and edit its contents to match your environment**
+  1. run backend server: `python app.py`
+1. For frontend / UI
+  1. Install prerequities: `cd frontend-ui; npm install`
+  1. Create configuration for prod:
+    1. `cp .env.template .env.production`
+    1. edit **.env.production** and fill with prod values
+    1. run via: `node_modules/.bin/vue-cli-service serve --mode production`
 
 ### High level overview
 
@@ -133,6 +141,8 @@ In order to prepare your frontend development environment:
 $ cd ftontend-ui
 $ npm install
 $ npm run server
+# or directly via vue plugin:
+$ node_modules/.bin/vue-cli-service serve --mode development
 ```
 
 Now you should have your frontend service running in [http://localhost:8080/](http://localhost:8080/)
