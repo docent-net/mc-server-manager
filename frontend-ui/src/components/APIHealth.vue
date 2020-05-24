@@ -12,11 +12,12 @@ export default {
   data() {
     return {
       msg: '',
+      APIAddr: '',
     };
   },
   methods: {
     getStatusMessage() {
-      const path = 'http://localhost:8000/health';
+      const path = `${this.APIAddr}/health`;
       axios.get(path)
         .then((res) => {
           this.msg = res.data;
@@ -26,8 +27,12 @@ export default {
           console.error(error);
         });
     },
+    setAPIServerAddr() {
+      this.APIAddr = process.env.VUE_APP_API_ADDR;
+    },
   },
   created() {
+    this.setAPIServerAddr();
     this.getStatusMessage();
   },
 };
