@@ -268,7 +268,7 @@ export default {
       const payload = {
         server_name: this.secureServerName,
       };
-      const path = 'http://localhost:8000/secure_server_instance';
+      const path = `${this.APIAddr}/secure_server_instance`;
       axios.post(path, payload)
         .then(() => {
           this.getServers();
@@ -294,7 +294,7 @@ export default {
       this.$refs.secureServerModal.hide();
     },
     deleteServer() {
-      const path = `http://localhost:8000/delete_server_instance/${this.deleteServerName}`;
+      const path = `${this.APIAddr}/delete_server_instance/${this.deleteServerName}`;
       axios.delete(path)
         .then(() => {
           this.getServers();
