@@ -5,7 +5,7 @@ on:
     - master
     paths:
       - '.github/workflows/ci-backend-server.yaml'
-      - 'backend/*'
+      - 'backend/**'
 
 jobs:
   build:

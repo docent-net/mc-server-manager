@@ -5,7 +5,7 @@ on:
     - master
     paths:
       - '.github/workflows/ci-frontend-ui.yaml'
-      - 'frontend-ui/*'
+      - 'frontend-ui/**'
 
 jobs:
   build:
