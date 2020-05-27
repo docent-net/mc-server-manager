@@ -1,11 +1,9 @@
 name: CI for frontend UI
 on:
   pull_request:
-    branches:
-    - master
     paths:
       - '.github/workflows/ci-frontend-ui.yaml'
-      - 'frontend-ui/*'
+      - 'frontend-ui/**'
 
 jobs:
   build:
