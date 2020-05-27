@@ -1,0 +1,35 @@
+name: CI for frontend UI
+on:
+  pull_request:
+    branches:
+    - master
+    paths:
+      - '.github/workflows/ci-frontend-ui.yaml'
+      - 'frontend-ui/*'
+
+jobs:
+  build:
+    name: frontend-unit-tests
+    # TODO: self-hosted & Fedora
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@master
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install npm deps
+        run: |
+          cd frontend-ui
+          npm install
+      - name: Run frontend tests
+        run: |
+          cd frontend-ui
+          npm run test:unit
