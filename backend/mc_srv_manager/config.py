@@ -3,7 +3,7 @@
 import configparser
 from pathlib import Path
 from typing import Type
-
+# 1
 class Config:
     def __init__(self) -> None:
         self.config = configparser.ConfigParser(interpolation=None)
