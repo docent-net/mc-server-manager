@@ -1,6 +1,8 @@
 name: CI for backend server
 on:
   pull_request:
+    branches:
+    - master
     paths:
       - '.github/workflows/ci-backend-server.yaml'
       - 'backend/**'
