@@ -1,6 +1,6 @@
 ![](https://github.com/docent-net/mc-server-manager/workflows/CI%20for%20backend%20server/badge.svg)
 
-![](https://github.com/docent-net/mc-server-manager/workflows/CI%20for%20frontend%20ui/badge.svg)
+![](https://github.com/docent-net/mc-server-manager/workflows/CI%20for%20frontend%20UI/badge.svg)
 
 # mc-server-manager
 
